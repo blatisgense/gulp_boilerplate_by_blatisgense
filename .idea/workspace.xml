@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cf8817d7-ca2c-458b-86ff-7a24c54f78cf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/_src/HTML_parts/footer.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_src/HTML_parts/head.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/_src/SCRIPTS/app.js" afterDir="false" />
+    <list default="true" id="cf8817d7-ca2c-458b-86ff-7a24c54f78cf" name="Default Changelist" comment="Add more productive image serving, add .gitignore, other little changes.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/untitled.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/untitled.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_src/SCRIPTS/about.js" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_src/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gulpfile.babel.js" beforeDir="false" afterPath="$PROJECT_DIR$/gulpfile.babel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/.cache/@babel/register/.babel.7.19.0.development.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/.cache/@babel/register/.babel.7.19.0.development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ChangesViewManager" show_ignored="true" />
   <component name="ComposerSettings">
     <execution />
   </component>
@@ -96,8 +90,17 @@
       <updated>1666953532955</updated>
       <workItem from="1666953534149" duration="64000" />
       <workItem from="1667322691423" duration="1599000" />
-      <workItem from="1668523925940" duration="3450000" />
+      <workItem from="1668523925940" duration="3938000" />
+      <workItem from="1668529881271" duration="249000" />
     </task>
+    <task id="LOCAL-00001" summary="Add more productive image serving, add .gitignore, other little changes.">
+      <created>1668527707130</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1668527707130</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -113,5 +116,10 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add more productive image serving, add .gitignore, other little changes." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add more productive image serving, add .gitignore, other little changes." />
   </component>
 </project>
