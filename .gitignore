@@ -1,4 +1,10 @@
-node_modules
-node_modules/**/*.*
-.idea
-.idea/**/*.*
+/node_modules
+/node_modules/**/*.*
+/.idea
+/.idea/**/*.*
+/.idea/modules.xml
+.idea/modules.xml
+/node_modules/
+.idea/workspace.xml
+/.idea/workspace.xml
+/.idea/
