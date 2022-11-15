@@ -4,7 +4,7 @@ import dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import babel from 'gulp-babel';
 import sourcemaps from 'gulp-sourcemaps';
-//import concat from 'gulp-concat'; at now useless
+import concat from 'gulp-concat';
 import autoprefixer from 'gulp-autoprefixer';
 import del from "del";
 import browserSync from 'browser-sync';
@@ -12,7 +12,6 @@ import cleanCSS from 'gulp-clean-css';
 import uglify from 'gulp-uglify';
 import htmlmin from 'gulp-htmlmin';
 import sharpResponsive from "gulp-sharp-responsive";
-import rename from "gulp-rename";
 import size from 'gulp-size';
 import ttf2woff2 from 'gulp-ttf2woff2';
 import zip from 'gulp-zip';
@@ -22,7 +21,6 @@ import fileinclude from'gulp-file-include';
 
 // consts
 const sass = gulpSass(dartSass);
-
 const paths = {
     allFiles: {
         src: '_src/**/*.*',
@@ -38,21 +36,20 @@ const paths = {
         dest: '_build/SCRIPTS/'
     },
     documents: {
-        //for one page site =>
-        //src: '_src/*.html',
-        src: ['_src/*.html' , '!_src/index.html'],
+        src: ['_src/*.html'],
         dest: '_build/',
     },
     imgs: {
-        //_src: '_src/IMAGES/**/*.{png, jpg, jpeg}', hui znaet pochemu ne robit, ya nakalhozil =>
-        src: ['_src/IMAGES/**/*.jpg', '_src/IMAGES/**/*.jpeg', '_src/IMAGES/**/*.png'],
+        src: {
+            jpg: ['_src/IMAGES/**/*.jpg', '_src/IMAGES/**/*.jpeg'],
+            png: '_src/IMAGES/**/*.png',
+        },
         dest: '_build/IMAGES/',
     },
     fonts: {
         src: '_src/SCSS/FONTS/**/*.ttf',
         dest: '_build/SCSS/FONTS/'
     },
-    root: '/',
 };
 
 
@@ -92,11 +89,8 @@ function ScriptFunc() {
             plugins: ['@babel/transform-runtime'],
             presets: ['@babel/env']
         }))
-        /**.pipe(concat('app.js')) at now so useless**/
+        .pipe(concat('app.js'))
         .pipe(uglify())
-        .pipe(rename({
-            suffix: ".min",
-        }))
         .pipe(sourcemaps.write('./'))
         .pipe(size())
         .pipe(gulp.dest(paths.scripts.dest))
@@ -111,9 +105,6 @@ function StyleFunc() {
             cascade: true
         }))
         .pipe(cleanCSS())
-        .pipe(rename({
-            suffix: ".min",
-        }))
         .pipe(sourcemaps.write('./'))
         .pipe(size())
         .pipe(gulp.dest(paths.styles.dest))
@@ -121,12 +112,25 @@ function StyleFunc() {
 }
 
 function jpgFunc() {
-    return gulp.src(paths.imgs.src)
+    return gulp.src(paths.imgs.src.jpg)
         .pipe(sharpResponsive({
             /** includeOriginalFile: true,  if need to use original file **/
             formats: [
-                { format: "webp", quality: 70},
-                // avif now? { format: "avif", width: 1920, rename: { suffix: "-xl" }},
+                { format: "webp", quality: 75},
+                { format: "avif"},
+            ]
+        }))
+        .pipe(size())
+        .pipe(gulp.dest(paths.imgs.dest))
+        .pipe(browserSync.stream());
+}
+
+function pngFunc() {
+    return gulp.src(paths.imgs.src.png)
+        .pipe(sharpResponsive({
+            /** includeOriginalFile: true,  if need to use original file **/
+            formats: [
+                { format: "webp", quality: 80},
             ]
         }))
         .pipe(size())
@@ -136,16 +140,11 @@ function jpgFunc() {
 
 function HTMLFunc() {
     return gulp.src(paths.documents.src)
-        //.pipe(avifWebpHTML())
         .pipe(fileinclude({
             prefix: '@@',
             /**basepath: '@file'**/
         }))
         .pipe(htmlmin({ collapseWhitespace: true }))
-        //only for multiPage sites =>
-        .pipe(rename({
-            suffix: ".min",
-        }))
         .pipe(size())
         .pipe(gulp.dest(paths.documents.dest))
         .pipe(browserSync.stream());
@@ -154,7 +153,8 @@ function HTMLFunc() {
 function watchFunc() {
     gulp.watch(paths.scripts.src, ScriptFunc);
     gulp.watch(paths.styles.src, StyleFunc);
-    gulp.watch(paths.imgs.src, jpgFunc);
+    gulp.watch(paths.imgs.src.jpg, jpgFunc);
+    gulp.watch(paths.imgs.src.png, pngFunc());
     gulp.watch(paths.documents.src, HTMLFunc);
 }
 
@@ -165,7 +165,7 @@ function zipFunc() {
 }
 
 
-const defaultTask = gulp.series(deleteFunc, copyFunc, gulp.parallel(HTMLFunc ,fontFunc, ScriptFunc, StyleFunc, jpgFunc, ), gulp.parallel(serverFunc, watchFunc,));
+const defaultTask = gulp.series(deleteFunc, copyFunc, gulp.parallel(HTMLFunc ,fontFunc, ScriptFunc, StyleFunc, gulp.parallel(jpgFunc, pngFunc,), ), gulp.parallel(serverFunc, watchFunc,),);
 
 gulp.task('delete', deleteFunc)
 gulp.task('img', jpgFunc)
