@@ -8,13 +8,11 @@ import concat from 'gulp-concat';
 import autoprefixer from 'gulp-autoprefixer';
 import del from "del";
 import browserSync from 'browser-sync';
-import cleanCSS from 'gulp-clean-css';
 import uglify from 'gulp-uglify';
 import htmlmin from 'gulp-htmlmin';
 import sharpResponsive from "gulp-sharp-responsive";
 import size from 'gulp-size';
 import ttf2woff2 from 'gulp-ttf2woff2';
-import zip from 'gulp-zip';
 import fileinclude from'gulp-file-include';
 
 
@@ -25,11 +23,10 @@ const paths = {
     allFiles: {
         src: '_src/**/*.*',
         dest: '_build/',
-        destZIP: '_build/**/*.*',
     },
     styles: {
         src: '_src/SCSS/**/*.{scss, css, sass}',
-        dest: '_build/SCSS/'
+        dest: '_build/CSS/'
     },
     scripts: {
         src: '_src/SCRIPTS/**/*.js',
@@ -50,6 +47,14 @@ const paths = {
         src: '_src/SCSS/FONTS/**/*.ttf',
         dest: '_build/SCSS/FONTS/'
     },
+    svg:{
+        src: '_src/IMAGES/SVG/**/*.svg',
+        dest: '_build/IMAGES/SVG/'
+    },
+    jason:{
+        src:'_src/SCRIPTS/DB/**/*.json',
+        dest:'_build/SCRIPTS/DB/'
+    }
 };
 
 
@@ -58,7 +63,7 @@ function serverFunc() {
     browserSync.init({
         server: {
             baseDir: paths.allFiles.dest,
-            index: "index.html",
+            index: "main.html",
         },
         ui: {
             port: 8080,
@@ -66,9 +71,16 @@ function serverFunc() {
     });
 }
 
-function copyFunc() {
-    return gulp.src(paths.allFiles.src).pipe(gulp.dest(paths.allFiles.dest))
-}
+//function copyFunc() {return gulp.src(paths.allFiles.src).pipe(gulp.dest(paths.allFiles.dest))}
+
+
+function JsonFunc() {
+    return gulp.src(paths.jason.src)
+        .pipe(gulp.dest(paths.jason.dest))}
+
+function svgFunc() {
+    return gulp.src(paths.svg.src)
+        .pipe(gulp.dest(paths.svg.dest))}
 
 function deleteFunc() {
     return del([paths.allFiles.dest])
@@ -89,7 +101,7 @@ function ScriptFunc() {
             plugins: ['@babel/transform-runtime'],
             presets: ['@babel/env']
         }))
-        .pipe(concat('app.js'))
+        //.pipe(concat('app.js'))
         .pipe(uglify())
         .pipe(sourcemaps.write('./'))
         .pipe(size())
@@ -100,11 +112,10 @@ function ScriptFunc() {
 function StyleFunc() {
     return gulp.src(paths.styles.src)
         .pipe(sourcemaps.init({largeFile: true}))
-        .pipe(sass.sync().on('error', sass.logError))
+        .pipe(sass.sync({outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(autoprefixer({
             cascade: true
         }))
-        .pipe(cleanCSS())
         .pipe(sourcemaps.write('./'))
         .pipe(size())
         .pipe(gulp.dest(paths.styles.dest))
@@ -114,7 +125,7 @@ function StyleFunc() {
 function jpgFunc() {
     return gulp.src(paths.imgs.src.jpg)
         .pipe(sharpResponsive({
-            /** includeOriginalFile: true,  if need to use original file **/
+            includeOriginalFile: true,
             formats: [
                 { format: "webp", quality: 75},
                 { format: "avif"},
@@ -128,7 +139,7 @@ function jpgFunc() {
 function pngFunc() {
     return gulp.src(paths.imgs.src.png)
         .pipe(sharpResponsive({
-            /** includeOriginalFile: true,  if need to use original file **/
+            includeOriginalFile: true,
             formats: [
                 { format: "webp", quality: 80},
             ]
@@ -138,13 +149,15 @@ function pngFunc() {
         .pipe(browserSync.stream());
 }
 
+
+
 function HTMLFunc() {
     return gulp.src(paths.documents.src)
         .pipe(fileinclude({
             prefix: '@@',
             /**basepath: '@file'**/
         }))
-        .pipe(htmlmin({ collapseWhitespace: true }))
+        // .pipe(htmlmin())
         .pipe(size())
         .pipe(gulp.dest(paths.documents.dest))
         .pipe(browserSync.stream());
@@ -154,20 +167,18 @@ function watchFunc() {
     gulp.watch(paths.scripts.src, ScriptFunc);
     gulp.watch(paths.styles.src, StyleFunc);
     gulp.watch(paths.imgs.src.jpg, jpgFunc);
-    gulp.watch(paths.imgs.src.png, pngFunc());
+    gulp.watch(paths.imgs.src.png, pngFunc);
     gulp.watch(paths.documents.src, HTMLFunc);
-}
 
-function zipFunc() {
-    return gulp.src(paths.allFiles.destZIP)
-        .pipe(zip('ready.zip'))
-        .pipe(gulp.dest(paths.allFiles.dest))
+    gulp.watch(paths.svg.src, svgFunc);
+    gulp.watch(paths.jason.src, JsonFunc);
 }
 
 
-const defaultTask = gulp.series(deleteFunc, copyFunc, gulp.parallel(HTMLFunc ,fontFunc, ScriptFunc, StyleFunc, gulp.parallel(jpgFunc, pngFunc,), ), gulp.parallel(serverFunc, watchFunc,),);
+
+
+const defaultTask = gulp.series(deleteFunc,  gulp.parallel(svgFunc, JsonFunc,  HTMLFunc ,fontFunc, ScriptFunc, StyleFunc, gulp.parallel(jpgFunc, pngFunc,), ), gulp.parallel(serverFunc, watchFunc,),);
 
 gulp.task('delete', deleteFunc)
 gulp.task('img', jpgFunc)
 gulp.task('default', defaultTask)
-gulp.task('createZIP', zipFunc)
