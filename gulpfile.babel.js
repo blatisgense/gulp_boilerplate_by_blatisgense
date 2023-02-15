@@ -63,7 +63,7 @@ function serverFunc() {
     browserSync.init({
         server: {
             baseDir: paths.allFiles.dest,
-            index: "main.html",
+            index: "index.html",
         },
         ui: {
             port: 8080,
