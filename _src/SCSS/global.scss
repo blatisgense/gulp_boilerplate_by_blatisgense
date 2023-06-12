@@ -1,0 +1,30 @@
+@import "mixins";
+
+
+*{
+  margin: 0;
+  padding: 0;
+  border: none;
+  list-style: none;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  scroll-behavior: smooth;
+}
+body.noScroll{
+  overflow: hidden;
+}
+button,a{
+  cursor: pointer;
+}
+.page{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+
+

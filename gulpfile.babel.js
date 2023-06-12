@@ -1,10 +1,10 @@
 //imports
 import gulp from 'gulp';
+import path from 'path';
 import dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import babel from 'gulp-babel';
 import sourcemaps from 'gulp-sourcemaps';
-import concat from 'gulp-concat';
 import autoprefixer from 'gulp-autoprefixer';
 import del from "del";
 import browserSync from 'browser-sync';
@@ -14,15 +14,33 @@ import sharpResponsive from "gulp-sharp-responsive";
 import size from 'gulp-size';
 import ttf2woff2 from 'gulp-ttf2woff2';
 import fileinclude from'gulp-file-include';
+import plumber from 'gulp-plumber';
+import notify from 'gulp-notify';
+import svgSprite from 'gulp-svg-sprite';
 
 
 
-// consts
+// variables
 const sass = gulpSass(dartSass);
+const configFTP = {
+    host: '', // Адрес FTP сервера
+    user: '', // Имя пользователя
+    password: '', // Пароль
+    parallel: 20, // Кол-во одновременных потоков
+};
+//const projectDirName = path.basename(path.resolve());
+const buildPath = `./_build`;
+const srcPath = `./_src`;
 const paths = {
     allFiles: {
-        src: '_src/**/*.*',
-        dest: '_build/',
+        src: `${srcPath}/**/*.*`,
+        dest: `${buildPath}/`,
+    },
+    ftp: ``,
+    //ToDo: path to variables, add media folder instead IMAGES SVG etc.
+    static: {
+        src:`${srcPath}/static/**/*.*`,
+        dest: `${buildPath}/static/`
     },
     styles: {
         src: '_src/SCSS/**/*.{scss, css, sass}',
@@ -32,6 +50,7 @@ const paths = {
         src: '_src/SCRIPTS/**/*.js',
         dest: '_build/SCRIPTS/'
     },
+    documentsParts: "_src/HTML_parts/**/*.html",
     documents: {
         src: ['_src/*.html'],
         dest: '_build/',
@@ -57,6 +76,15 @@ const paths = {
     }
 };
 
+const handleError = (taskName) => {
+    return plumber({
+        errorHandler: notify.onError({
+            title: taskName,
+            message: 'Error: <%= error.message %>',
+        }),
+    });
+};
+//ToDo: turn all func to arrow ()=>{}
 
 //tasks
 function serverFunc() {
@@ -71,7 +99,25 @@ function serverFunc() {
     });
 }
 
-//function copyFunc() {return gulp.src(paths.allFiles.src).pipe(gulp.dest(paths.allFiles.dest))}
+const createSvgSprite = () => {
+    return gulp.src(paths.svg.src)
+        .pipe(plugins.handleError('SVG'))
+        .pipe(svgSprite({
+                mode: {
+                    stack: {
+                        sprite: `icons.svg`,
+                        example: true,
+                    },
+                },
+            })
+        )
+        .pipe(gulp.dest(paths.svg.dest));
+};
+
+function copyFunc() {
+    return gulp.src(paths.static.src)
+    .pipe(gulp.dest(paths.static.dest))
+}
 
 
 function JsonFunc() {
@@ -97,11 +143,7 @@ function fontFunc() {
 function ScriptFunc() {
     return gulp.src(paths.scripts.src)
         .pipe(sourcemaps.init({largeFile: true}))
-        .pipe(babel({
-            plugins: ['@babel/transform-runtime'],
-            presets: ['@babel/env']
-        }))
-        //.pipe(concat('app.js'))
+        .pipe(babel())
         .pipe(uglify())
         .pipe(sourcemaps.write('./'))
         .pipe(size())
@@ -157,7 +199,7 @@ function HTMLFunc() {
             prefix: '@@',
             /**basepath: '@file'**/
         }))
-        // .pipe(htmlmin())
+        .pipe(htmlmin())
         .pipe(size())
         .pipe(gulp.dest(paths.documents.dest))
         .pipe(browserSync.stream());
@@ -169,9 +211,9 @@ function watchFunc() {
     gulp.watch(paths.imgs.src.jpg, jpgFunc);
     gulp.watch(paths.imgs.src.png, pngFunc);
     gulp.watch(paths.documents.src, HTMLFunc);
-
     gulp.watch(paths.svg.src, svgFunc);
     gulp.watch(paths.jason.src, JsonFunc);
+    gulp.watch(paths.documentsParts, HTMLFunc);
 }
 
 
