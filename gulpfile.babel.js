@@ -19,24 +19,25 @@ import notify from 'gulp-notify';
 import svgSprite from 'gulp-svg-sprite';
 import vinylFTP from 'vinyl-ftp';
 import ifPlugin from 'gulp-if';
+import webpack from 'webpack-stream';
+import {webpackConfig} from "./webpack.config.js";
+
 
 //test
-import webpHtml from 'gulp-webp-html-nosvg'
+// import webpHtml from 'gulp-webp-html-nosvg'
 import zipPlugin from 'gulp-zip';
+// import groupCssMediaQueries from 'gulp-group-css-media-queries';
 
-import {plugins} from "./q/gulp/config/plugins.js";
-import groupCssMediaQueries from 'gulp-group-css-media-queries';
-//find usages
+
 
 
 // variables
 const IF = ifPlugin
-    //ToDo check IF and plugin. references
 const isBuild = process.argv.includes('--build');
 const isDev = !process.argv.includes('--build');
 const sass = gulpSass(dartSass);
 const configFTP = {
-    host: '', // adress FTP
+    host: '', // address FTP
     user: '', // User name
     password: '', // Password
     parallel: 20, // Number of threads
@@ -50,43 +51,41 @@ const paths = {
         src: `${srcPath}/**/*.*`,
         dest: `${buildPath}/`,
     },
-    ftp: ``,
-    //ToDo: path to variables, add media folder instead IMAGES SVG etc.
     static: {
-        src:`${srcPath}/static/**/*.*`,
-        dest: `${buildPath}/static/`
+        src:`${srcPath}/STATIC/**/*.*`,
+        dest: `${buildPath}/STATIC/`
     },
     styles: {
-        src: '_src/SCSS/**/*.{scss, css, sass}',
-        dest: '_build/CSS/'
+        src: `${srcPath}/STYLE/**/*.{scss, css, sass}`,
+        dest: `${buildPath}/STYLE/`
     },
     scripts: {
-        src: '_src/SCRIPTS/**/*.js',
-        dest: '_build/SCRIPTS/'
+        src: `${srcPath}/JS/**/*.js`,
+        dest: `${buildPath}/JS/`
     },
-    documentsParts: "_src/HTML_parts/**/*.html",
+    documentsParts: `${srcPath}HTML_parts/**/*.html`,
     documents: {
-        src: ['_src/*.html'],
-        dest: '_build/',
+        src: [`${srcPath}/*.html`],
+        dest: `${buildPath}/`,
     },
-    imgs: {
+    media: {
         src: {
-            jpg: ['_src/IMAGES/**/*.jpg', '_src/IMAGES/**/*.jpeg'],
-            png: '_src/IMAGES/**/*.png',
+            jpg: [`${srcPath}/MEDIA/**/*.jpg`, `${srcPath}/IMAGES/**/*.jpeg`],
+            png: `${srcPath}/MEDIA/**/*.png`,
         },
-        dest: '_build/IMAGES/',
+        dest: `${buildPath}/MEDIA/`,
     },
     fonts: {
-        src: '_src/SCSS/FONTS/**/*.ttf',
-        dest: '_build/SCSS/FONTS/'
+        src: `${srcPath}/STYLE/FONTS/**/*.{ttf, woff, otf}`, //maybe change
+        dest: `${buildPath}/STYLE/FONTS/`
     },
     svg:{
-        src: '_src/IMAGES/SVG/**/*.svg',
-        dest: '_build/IMAGES/SVG/'
+        src: `${srcPath}/MEDIA/SVG/**/*.svg`,
+        dest: `${buildPath}/MEDIA/SVG/`
     },
     jason:{
-        src:'_src/SCRIPTS/DB/**/*.json',
-        dest:'_build/SCRIPTS/DB/'
+        src:`${srcPath}/JS/JSON/**/*.json`,
+        dest:`${buildPath}/JS/JSON/`
     },
     zip: [`${projectDirName}/**/*.*`, ![`${projectDirName}/.gitignore`,`${projectDirName}/LICENSE`, `${projectDirName}/README.md`, `${projectDirName}/package-lock.json`, `${projectDirName}/.gitattributes`, `${projectDirName}/node_modules`, `${projectDirName}/.idea`, `${projectDirName}/components`]]
 };
@@ -102,9 +101,9 @@ const handleError = (taskName) => {
 
 const ftp = () => {
     const ftpConnect = vinylFTP.create(configFTP);
-    return gulp.src(paths.allFiles.src)
-        .pipe(plugins.handleError('FTP'))
-        .pipe(ftpConnect.dest(`${paths.ftp}/${projectDirName}`));
+    return gulp.src(paths.allFiles.dest)
+        .pipe(handleError('FTP'))
+        .pipe(ftpConnect.dest(`${configFTP.path}/${projectDirName}`));
 };
 
 const zip = () => {
@@ -149,14 +148,16 @@ const createSvgSprite = () => {
         .pipe(gulp.dest(paths.svg.dest));
 };
 
-function copyFunc() {
+function staticFunc() {
     return gulp.src(paths.static.src)
+        .pipe(handleError('STATIC'))
     .pipe(gulp.dest(paths.static.dest))
 }
 
 
 function JsonFunc() {
     return gulp.src(paths.jason.src)
+        .pipe(handleError('JSON'))
         .pipe(gulp.dest(paths.jason.dest))}
 
 function deleteFunc() {
@@ -165,6 +166,7 @@ function deleteFunc() {
 
 function fontFunc() {
     return gulp.src(paths.fonts.src)
+        .pipe(handleError('FONT'))
         .pipe(ttf2woff2())
         .pipe(size())
         .pipe(gulp.dest(paths.fonts.dest))
@@ -173,7 +175,11 @@ function fontFunc() {
 
 function ScriptFunc() {
     return gulp.src(paths.scripts.src)
-        .pipe(sourcemaps.init({largeFile: true}))
+        .pipe(handleError('SCRIPTS'))
+        .pipe(IF(isDev, sourcemaps.init({
+            largeFile: true,
+        })))
+        .pipe(webpack({ config: webpackConfig(isDev) }))
         .pipe(babel())
         .pipe(uglify())
         .pipe(sourcemaps.write('./'))
@@ -183,13 +189,13 @@ function ScriptFunc() {
 }
 
 function StyleFunc() {
-    // todo add sourse maps like this
     return gulp.src(paths.styles.src)
+        .pipe(handleError('STYLE'))
         .pipe(IF(isDev, sourcemaps.init({
             largeFile: true,
         })))
         .pipe(sass.sync({outputStyle: 'compressed'}).on('error', sass.logError))
-        .pipe(IF(isBuild, groupCssMediaQueries()))
+        // .pipe(IF(isBuild, groupCssMediaQueries()))
         .pipe(autoprefixer({
             cascade: true
         }))
@@ -200,7 +206,7 @@ function StyleFunc() {
 }
 
 function jpgFunc() {
-    return gulp.src(paths.imgs.src.jpg)
+    return gulp.src(paths.media.src.jpg)
         .pipe(handleError('JPG'))
         .pipe(sharpResponsive({
             includeOriginalFile: true,
@@ -210,12 +216,12 @@ function jpgFunc() {
             ]
         }))
         .pipe(size())
-        .pipe(gulp.dest(paths.imgs.dest))
+        .pipe(gulp.dest(paths.media.dest))
         .pipe(browserSync.stream());
 }
 
 function pngFunc() {
-    return gulp.src(paths.imgs.src.png)
+    return gulp.src(paths.media.src.png)
         .pipe(handleError('PNG'))
         .pipe(sharpResponsive({
             includeOriginalFile: true,
@@ -224,7 +230,7 @@ function pngFunc() {
             ]
         }))
         .pipe(size())
-        .pipe(gulp.dest(paths.imgs.dest))
+        .pipe(gulp.dest(paths.media.dest))
         .pipe(browserSync.stream());
 }
 
@@ -233,11 +239,15 @@ function pngFunc() {
 function HTMLFunc() {
     return gulp.src(paths.documents.src)
         .pipe(handleError('HTML'))
+        .pipe(IF(isDev, sourcemaps.init({
+            largeFile: true,
+        })))
         .pipe(fileinclude({
             prefix: '@@',
             /**basepath: '@file'**/
         }))
-        .pipe(IF(isBuild, webpHtml()))
+        // .pipe(IF(isBuild, webpHtml()))
+        // .pipe(webpHtml())
         .pipe(htmlmin({
             useShortDoctype: true,
             sortClassName: true,
@@ -252,19 +262,34 @@ function HTMLFunc() {
 function watchFunc() {
     gulp.watch(paths.scripts.src, ScriptFunc);
     gulp.watch(paths.styles.src, StyleFunc);
-    gulp.watch(paths.imgs.src.jpg, jpgFunc);
-    gulp.watch(paths.imgs.src.png, pngFunc);
+    gulp.watch(paths.media.src.jpg, jpgFunc);
+    gulp.watch(paths.media.src.png, pngFunc);
     gulp.watch(paths.documents.src, HTMLFunc);
-    gulp.watch(paths.svg.src, svgFunc);
+    gulp.watch(paths.svg.src, createSvgSprite);
     gulp.watch(paths.jason.src, JsonFunc);
     gulp.watch(paths.documentsParts, HTMLFunc);
+    gulp.watch(paths.static.src, staticFunc);
 }
 
 
+//tasks
 
+const media_task = gulp.parallel(jpgFunc, pngFunc, createSvgSprite);
+const server_task = gulp.parallel(serverFunc, watchFunc);
+const clean_task = deleteFunc; // add ()
+const static_task = gulp.parallel(staticFunc, JsonFunc)
+const transpile_task = gulp.parallel(HTMLFunc, fontFunc, ScriptFunc, StyleFunc)
 
-const defaultTask = gulp.series(deleteFunc,  gulp.parallel(svgFunc, JsonFunc,  HTMLFunc ,fontFunc, ScriptFunc, StyleFunc, gulp.parallel(jpgFunc, pngFunc,), ), gulp.parallel(serverFunc, watchFunc,),);
+const development = gulp.series(clean_task, static_task, media_task, transpile_task, server_task);
+const build = gulp.series(clean_task, static_task, media_task, transpile_task);
 
-gulp.task('delete', deleteFunc)
-gulp.task('img', jpgFunc)
-gulp.task('default', defaultTask)
+gulp.task('clean', deleteFunc)
+gulp.task('media', media_task)
+gulp.task('static', static_task)
+gulp.task('default', development)
+gulp.task('dev', development)
+gulp.task('build', build)
+gulp.task('zip', zip)
+gulp.task('ftp', ftp)
+
+export {paths};

@@ -4,13 +4,12 @@
   "description": "",
   "main": "gulpfile.babel.js",
   "scripts": {
-    "dev": "gulp",
+    "dev": "gulp dev",
     "build": "gulp build --build",
-    "zip": "gulp deployZIP --build",
-    "deployFTP": "gulp deployFTP --build",
-    "svgSprive": "gulp svgSprive",
-    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,html,css,md,yaml,yml}\"",
-    "predeploy": "npm run build"
+    "zip": "npm run build, gulp zip --build",
+    "deployFTP": "gulp ftp --build",
+    "svgSprive": "gulp media",
+    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,html,css,md,yaml,yml}\""
   },
   "repository": {
     "type": "git",
@@ -56,15 +55,13 @@
     "gulp-zip": "^5.1.0",
     "prettier": "2.8.8",
     "vinyl-ftp": "^0.6.1",
+    "webpack": "^5.65.0",
+    "webpack-stream": "^7.0.0",
 
 
     "gulp-webp-html-nosvg": "^1.0.1",
     "gulp-group-css-media-queries": "^1.2.2",
-    "gulp-svg-sprite": "^1.5.0",
-
-
-    "webpack": "^5.65.0",
-    "webpack-stream": "^7.0.0"
+    "gulp-svg-sprite": "^1.5.0"
   },
   "dependencies": {
     "aos": "^2.3.4",
