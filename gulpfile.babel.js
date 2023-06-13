@@ -169,7 +169,6 @@ function ScriptFunc() {
         .pipe(IF(isDev, sourcemaps.init({
             largeFile: true,
         })))
-        .pipe(webpack({ config: webpackConfig(isDev) }))
         .pipe(babel())
         .pipe(uglify())
         .pipe(sourcemaps.write('./'))
