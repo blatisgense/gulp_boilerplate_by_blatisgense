@@ -1,4 +1,6 @@
-//imports
+//==============
+// IMPORTS
+//==============
 import gulp from 'gulp';
 import path from 'path';
 import * as dartSass from 'sass';
@@ -8,7 +10,7 @@ import sourcemaps from 'gulp-sourcemaps';
 import autoprefixer from 'gulp-autoprefixer';
 import del from "del";
 import browserSync from 'browser-sync';
-import uglify from 'gulp-uglify';
+import terser from 'gulp-terser';
 import htmlmin from 'gulp-htmlmin';
 import sharpResponsive from "gulp-sharp-responsive";
 import size from 'gulp-size';
@@ -19,17 +21,16 @@ import notify from 'gulp-notify';
 import svgSprite from 'gulp-svg-sprite';
 import vinylFTP from 'vinyl-ftp';
 import ifPlugin from 'gulp-if';
-import webpack from 'webpack-stream';
-import {webpackConfig} from "./webpack.config.js";
+import groupCssMediaQueries from 'gulp-group-css-media-queries';
 
 //test
-// import webpHtml from 'gulp-webp-html-nosvg'
-// import groupCssMediaQueries from 'gulp-group-css-media-queries';
+// import webpHtml from 'gulp-webp-html-nosvg'; // write plugin for yourself
 
 
 
-
-// variables
+//==============
+// VARIABLES
+//==============
 const IF = ifPlugin
 const isBuild = process.argv.includes('--build');
 const isDev = !process.argv.includes('--build');
@@ -96,17 +97,17 @@ const handleError = (taskName) => {
     });
 };
 
+
+//==============
+// FUNCTIONS
+//==============
 const ftp = () => {
     const ftpConnect = vinylFTP.create(configFTP);
     return gulp.src(paths.allFiles.dest)
         .pipe(handleError('FTP'))
         .pipe(ftpConnect.dest(`${configFTP.path}/${projectDirName}`));
 };
-
-
-//ToDo: turn all func to arrow ()=>{}
-
-function serverFunc() {
+const serverFunc = () => {
     browserSync.init({
         server: {
             baseDir: paths.allFiles.dest,
@@ -115,10 +116,6 @@ function serverFunc() {
         },
         ui: {
             port: 8080,
-            weinre: {
-                //ToDo: test weinre
-                port: 9090
-            }
         },
     });
 }
@@ -138,23 +135,23 @@ const createSvgSprite = () => {
         .pipe(gulp.dest(paths.svg.dest));
 };
 
-function staticFunc() {
+const staticFunc = () => {
     return gulp.src(paths.static.src)
         .pipe(handleError('STATIC'))
     .pipe(gulp.dest(paths.static.dest))
 }
 
 
-function JsonFunc() {
+const JsonFunc = () => {
     return gulp.src(paths.jason.src)
         .pipe(handleError('JSON'))
         .pipe(gulp.dest(paths.jason.dest))}
 
-function deleteFunc() {
+const deleteFunc = () => {
     return del(paths.allFiles.dest)
 }
 
-function fontFunc() {
+const fontFunc = () => {
     return gulp.src(paths.fonts.src)
         .pipe(handleError('FONT'))
         .pipe(ttf2woff2())
@@ -163,21 +160,21 @@ function fontFunc() {
         .pipe(browserSync.stream());
 }
 
-function ScriptFunc() {
+const ScriptFunc = () => {
     return gulp.src(paths.scripts.src)
         .pipe(handleError('SCRIPTS'))
         .pipe(IF(isDev, sourcemaps.init({
             largeFile: true,
         })))
         .pipe(babel())
-        .pipe(uglify())
+        .pipe(terser())
         .pipe(sourcemaps.write('./'))
         .pipe(size())
         .pipe(gulp.dest(paths.scripts.dest))
         .pipe(browserSync.stream());
 }
 
-function StyleFunc() {
+const StyleFunc = () => {
     return gulp.src(paths.styles.src)
         .pipe(handleError('STYLE'))
         .pipe(IF(isDev, sourcemaps.init({
@@ -188,13 +185,14 @@ function StyleFunc() {
         .pipe(autoprefixer({
             cascade: true
         }))
+        .pipe(groupCssMediaQueries())
         .pipe(sourcemaps.write('./'))
         .pipe(size())
         .pipe(gulp.dest(paths.styles.dest))
         .pipe(browserSync.stream());
 }
 
-function jpgFunc() {
+const jpgFunc = () => {
     return gulp.src(paths.media.src.jpg)
         .pipe(handleError('JPG'))
         .pipe(sharpResponsive({
@@ -209,13 +207,13 @@ function jpgFunc() {
         .pipe(browserSync.stream());
 }
 
-function pngFunc() {
+const pngFunc = () => {
     return gulp.src(paths.media.src.png)
         .pipe(handleError('PNG'))
         .pipe(sharpResponsive({
             includeOriginalFile: true,
             formats: [
-                { format: "webp", quality: 80},
+                { format: "webp", quality: 75},
             ]
         }))
         .pipe(size())
@@ -225,7 +223,7 @@ function pngFunc() {
 
 
 
-function HTMLFunc() {
+const HTMLFunc = () => {
     return gulp.src(paths.documents.src)
         .pipe(handleError('HTML'))
         .pipe(IF(isDev, sourcemaps.init({
@@ -235,7 +233,6 @@ function HTMLFunc() {
             prefix: '@@',
             /**basepath: '@file'**/
         }))
-        // .pipe(IF(isBuild, webpHtml()))
         // .pipe(webpHtml())
         .pipe(htmlmin({
             useShortDoctype: true,
@@ -248,7 +245,7 @@ function HTMLFunc() {
         .pipe(browserSync.stream());
 }
 
-function watchFunc() {
+const watchFunc = () => {
     gulp.watch(paths.scripts.src, ScriptFunc);
     gulp.watch(paths.styles.src, StyleFunc);
     gulp.watch(paths.media.src.jpg, jpgFunc);
@@ -261,23 +258,25 @@ function watchFunc() {
 }
 
 
-//tasks
-
+//==============
+// TASKS
+//==============
 const media_task = gulp.parallel(jpgFunc, pngFunc, createSvgSprite);
 const server_task = gulp.parallel(serverFunc, watchFunc);
-const clean_task = deleteFunc; // add ()
-const static_task = gulp.parallel(staticFunc, JsonFunc)
-const transpile_task = gulp.parallel(HTMLFunc, fontFunc, ScriptFunc, StyleFunc)
+const clean_task = deleteFunc;
+const static_task = gulp.parallel(staticFunc, JsonFunc);
+const transpile_task = gulp.parallel(HTMLFunc, fontFunc, ScriptFunc, StyleFunc);
 
 const development = gulp.series(clean_task, static_task, media_task, transpile_task, server_task);
 const build = gulp.series(clean_task, static_task, media_task, transpile_task);
 
-gulp.task('clean', deleteFunc)
-gulp.task('media', media_task)
-gulp.task('static', static_task)
-gulp.task('default', development)
-gulp.task('dev', development)
-gulp.task('build', build)
-gulp.task('ftp', ftp)
+gulp.task('clean', deleteFunc);
+gulp.task('media', media_task);
+gulp.task('static', static_task);
+gulp.task('default', development);
+gulp.task('dev', development);
+gulp.task('build', build);
+gulp.task('ftp', ftp);
+
 
 export {paths};

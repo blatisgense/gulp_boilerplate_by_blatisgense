@@ -48,8 +48,8 @@
     "gulp-size": "^4.0.1",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-svg-sprite": "^1.5.0",
+    "gulp-terser": "^2.1.0",
     "gulp-ttf2woff2": "^4.0.1",
-    "gulp-uglify": "^3.0.2",
     "gulp-watch": "^5.0.1",
     "gulp-webp-html-nosvg": "^1.0.1",
     "gulp-zip": "^5.1.0",
@@ -57,7 +57,6 @@
     "prettier": "2.8.8",
     "sass": "^1.63.3",
     "vinyl-ftp": "^0.6.1"
-
   },
   "dependencies": {
     "aos": "^2.3.4",
