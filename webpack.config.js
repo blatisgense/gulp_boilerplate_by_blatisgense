@@ -1,20 +1,18 @@
-// import path from 'path';
-// import { fileURLToPath } from 'url';
-import {paths} from "./gulpfile.babel.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-//
-// const __filename = fileURLToPath(import.meta.url);
-// const srcFolder = 'src';
-// const buildFolder = 'dist';
-//
-// const paths = {
-//   root: path.dirname(__filename),
-//   src: path.resolve(srcFolder),
-//   build: path.resolve(buildFolder),
-// };
+const __filename = fileURLToPath(import.meta.url);
+const srcFolder = '_src';
+const buildFolder = '_build';
+
+const paths = {
+  root: path.dirname(__filename),
+  src: path.resolve(srcFolder),
+  build: path.resolve(buildFolder),
+};
 
 export const webpackConfig = (isMode) => ({
-  entry: ['@babel/polyfill', paths.scripts.src],
+  entry: ['@babel/polyfill', `${paths.src}/JS/app.js`],
 
   mode: isMode ? 'development' : 'production',
 
@@ -25,8 +23,8 @@ export const webpackConfig = (isMode) => ({
   cache: false,
 
   output: {
-    path: paths.scripts.dest,
-    filename: '[name].js',
+    path: `${paths.build}/JS`,
+    filename: 'app.js',
     // publicPath: '/',
   },
 

@@ -1,7 +1,7 @@
 //imports
 import gulp from 'gulp';
 import path from 'path';
-import dartSass from 'sass';
+import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import babel from 'gulp-babel';
 import sourcemaps from 'gulp-sourcemaps';
@@ -22,10 +22,8 @@ import ifPlugin from 'gulp-if';
 import webpack from 'webpack-stream';
 import {webpackConfig} from "./webpack.config.js";
 
-
 //test
 // import webpHtml from 'gulp-webp-html-nosvg'
-import zipPlugin from 'gulp-zip';
 // import groupCssMediaQueries from 'gulp-group-css-media-queries';
 
 
@@ -86,8 +84,7 @@ const paths = {
     jason:{
         src:`${srcPath}/JS/JSON/**/*.json`,
         dest:`${buildPath}/JS/JSON/`
-    },
-    zip: [`${projectDirName}/**/*.*`, ![`${projectDirName}/.gitignore`,`${projectDirName}/LICENSE`, `${projectDirName}/README.md`, `${projectDirName}/package-lock.json`, `${projectDirName}/.gitattributes`, `${projectDirName}/node_modules`, `${projectDirName}/.idea`, `${projectDirName}/components`]]
+    }
 };
 
 const handleError = (taskName) => {
@@ -106,13 +103,6 @@ const ftp = () => {
         .pipe(ftpConnect.dest(`${configFTP.path}/${projectDirName}`));
 };
 
-const zip = () => {
-    del(`${projectDirName}/${projectDirName}.zip`);
-    return gulp.src(paths.zip)
-        .pipe(handleError('ZIP'))
-        .pipe(zipPlugin(`${projectDirName}/${projectDirName}.zip`))
-        .pipe(gulp.dest(`${projectDirName}/`));
-};
 
 //ToDo: turn all func to arrow ()=>{}
 
@@ -289,7 +279,6 @@ gulp.task('static', static_task)
 gulp.task('default', development)
 gulp.task('dev', development)
 gulp.task('build', build)
-gulp.task('zip', zip)
 gulp.task('ftp', ftp)
 
 export {paths};
