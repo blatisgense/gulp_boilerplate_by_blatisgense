@@ -17,18 +17,32 @@ import fileinclude from'gulp-file-include';
 import plumber from 'gulp-plumber';
 import notify from 'gulp-notify';
 import svgSprite from 'gulp-svg-sprite';
+import vinylFTP from 'vinyl-ftp';
+import ifPlugin from 'gulp-if';
 
+//test
+import webpHtml from 'gulp-webp-html-nosvg'
+import zipPlugin from 'gulp-zip';
+
+import {plugins} from "./q/gulp/config/plugins.js";
+import groupCssMediaQueries from 'gulp-group-css-media-queries';
+//find usages
 
 
 // variables
+const IF = ifPlugin
+    //ToDo check IF and plugin. references
+const isBuild = process.argv.includes('--build');
+const isDev = !process.argv.includes('--build');
 const sass = gulpSass(dartSass);
 const configFTP = {
-    host: '', // Адрес FTP сервера
-    user: '', // Имя пользователя
-    password: '', // Пароль
-    parallel: 20, // Кол-во одновременных потоков
+    host: '', // adress FTP
+    user: '', // User name
+    password: '', // Password
+    parallel: 20, // Number of threads
+    path: '' //to dir. at hosting
 };
-//const projectDirName = path.basename(path.resolve());
+const projectDirName = path.basename(path.resolve());
 const buildPath = `./_build`;
 const srcPath = `./_src`;
 const paths = {
@@ -73,7 +87,8 @@ const paths = {
     jason:{
         src:'_src/SCRIPTS/DB/**/*.json',
         dest:'_build/SCRIPTS/DB/'
-    }
+    },
+    zip: [`${projectDirName}/**/*.*`, ![`${projectDirName}/.gitignore`,`${projectDirName}/LICENSE`, `${projectDirName}/README.md`, `${projectDirName}/package-lock.json`, `${projectDirName}/.gitattributes`, `${projectDirName}/node_modules`, `${projectDirName}/.idea`, `${projectDirName}/components`]]
 };
 
 const handleError = (taskName) => {
@@ -84,24 +99,44 @@ const handleError = (taskName) => {
         }),
     });
 };
+
+const ftp = () => {
+    const ftpConnect = vinylFTP.create(configFTP);
+    return gulp.src(paths.allFiles.src)
+        .pipe(plugins.handleError('FTP'))
+        .pipe(ftpConnect.dest(`${paths.ftp}/${projectDirName}`));
+};
+
+const zip = () => {
+    del(`${projectDirName}/${projectDirName}.zip`);
+    return gulp.src(paths.zip)
+        .pipe(handleError('ZIP'))
+        .pipe(zipPlugin(`${projectDirName}/${projectDirName}.zip`))
+        .pipe(gulp.dest(`${projectDirName}/`));
+};
+
 //ToDo: turn all func to arrow ()=>{}
 
-//tasks
 function serverFunc() {
     browserSync.init({
         server: {
             baseDir: paths.allFiles.dest,
             index: "index.html",
+            port: 3000
         },
         ui: {
             port: 8080,
+            weinre: {
+                //ToDo: test weinre
+                port: 9090
+            }
         },
     });
 }
 
 const createSvgSprite = () => {
     return gulp.src(paths.svg.src)
-        .pipe(plugins.handleError('SVG'))
+        .pipe(handleError('SVG'))
         .pipe(svgSprite({
                 mode: {
                     stack: {
@@ -124,12 +159,8 @@ function JsonFunc() {
     return gulp.src(paths.jason.src)
         .pipe(gulp.dest(paths.jason.dest))}
 
-function svgFunc() {
-    return gulp.src(paths.svg.src)
-        .pipe(gulp.dest(paths.svg.dest))}
-
 function deleteFunc() {
-    return del([paths.allFiles.dest])
+    return del(paths.allFiles.dest)
 }
 
 function fontFunc() {
@@ -152,9 +183,13 @@ function ScriptFunc() {
 }
 
 function StyleFunc() {
+    // todo add sourse maps like this
     return gulp.src(paths.styles.src)
-        .pipe(sourcemaps.init({largeFile: true}))
+        .pipe(IF(isDev, sourcemaps.init({
+            largeFile: true,
+        })))
         .pipe(sass.sync({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(IF(isBuild, groupCssMediaQueries()))
         .pipe(autoprefixer({
             cascade: true
         }))
@@ -166,6 +201,7 @@ function StyleFunc() {
 
 function jpgFunc() {
     return gulp.src(paths.imgs.src.jpg)
+        .pipe(handleError('JPG'))
         .pipe(sharpResponsive({
             includeOriginalFile: true,
             formats: [
@@ -180,6 +216,7 @@ function jpgFunc() {
 
 function pngFunc() {
     return gulp.src(paths.imgs.src.png)
+        .pipe(handleError('PNG'))
         .pipe(sharpResponsive({
             includeOriginalFile: true,
             formats: [
@@ -195,11 +232,18 @@ function pngFunc() {
 
 function HTMLFunc() {
     return gulp.src(paths.documents.src)
+        .pipe(handleError('HTML'))
         .pipe(fileinclude({
             prefix: '@@',
             /**basepath: '@file'**/
         }))
-        .pipe(htmlmin())
+        .pipe(IF(isBuild, webpHtml()))
+        .pipe(htmlmin({
+            useShortDoctype: true,
+            sortClassName: true,
+            collapseWhitespace: isBuild,
+            removeComments: isBuild
+        }))
         .pipe(size())
         .pipe(gulp.dest(paths.documents.dest))
         .pipe(browserSync.stream());
