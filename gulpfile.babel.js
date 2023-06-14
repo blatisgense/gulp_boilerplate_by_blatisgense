@@ -62,7 +62,7 @@ const paths = {
         src: `${srcPath}/JS/**/*.js`,
         dest: `${buildPath}/JS/`
     },
-    documentsParts: `${srcPath}HTML_parts/**/*.html`,
+    documentsParts: `${srcPath}/HTML_parts/**/*.html`,
     documents: {
         src: [`${srcPath}/*.html`],
         dest: `${buildPath}/`,
