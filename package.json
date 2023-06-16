@@ -59,10 +59,8 @@
     "vinyl-ftp": "^0.6.1"
   },
   "dependencies": {
-    "aos": "^2.3.4",
-    "swiper": "^8.4.5"
   },
   "browserslist": [
-    "last 20 versions and not dead"
+    "last 80 versions and not dead"
   ]
 }

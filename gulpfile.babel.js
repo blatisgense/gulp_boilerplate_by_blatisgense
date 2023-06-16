@@ -181,11 +181,8 @@ const StyleFunc = () => {
             largeFile: true,
         })))
         .pipe(sass.sync({outputStyle: 'compressed'}).on('error', sass.logError))
-        // .pipe(IF(isBuild, groupCssMediaQueries()))
-        .pipe(autoprefixer({
-            cascade: true
-        }))
-        .pipe(groupCssMediaQueries())
+        .pipe(IF(isBuild, autoprefixer({cascade: true})))
+	.pipe(IF(isBuild, groupCssMediaQueries()))
         .pipe(sourcemaps.write('./'))
         .pipe(size())
         .pipe(gulp.dest(paths.styles.dest))
