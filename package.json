@@ -8,6 +8,7 @@
     "build": "gulp build --build",
     "deployFTP": "gulp ftp --build",
     "svgSprive": "gulp media",
+    "fonts": "gulp font",
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,json,html,css,md,yaml,yml}\""
   },
   "repository": {
@@ -32,8 +33,10 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.22.5",
     "@babel/register": "^7.22.5",
+    "babel-loader": "^8.2.5",
     "browser-sync": "^2.27.10",
     "del": "^6.1.1",
+    "fs": "^0.0.1-security",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-babel": "^8.0.0",
@@ -49,6 +52,7 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-svg-sprite": "^1.5.0",
     "gulp-terser": "^2.1.0",
+    "gulp-ttf2woff": "^1.1.1",
     "gulp-ttf2woff2": "^4.0.1",
     "gulp-watch": "^5.0.1",
     "gulp-webp-html-nosvg": "^1.0.1",
@@ -56,7 +60,10 @@
     "plugin-error": "^2.0.0",
     "prettier": "2.8.8",
     "sass": "^1.63.3",
-    "vinyl-ftp": "^0.6.1"
+    "vinyl-ftp": "^0.6.1",
+    "webpack": "^5.65.0",
+    "webpack-stream": "^7.0.0",
+    "gulp-fonter-2": "^0.3.0"
   },
   "dependencies": {
   },

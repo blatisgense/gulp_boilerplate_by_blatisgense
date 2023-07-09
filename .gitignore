@@ -3,4 +3,5 @@
 /_build/
 /q/
 /later/
-/package-lock.json/
+/package-lock.json
+/test/
