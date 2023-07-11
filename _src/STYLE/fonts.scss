@@ -7,10 +7,10 @@
 }
 
 @font-face {
-	font-family: Roboto-BlackItalic; 
+	font-family: Roboto-BoldItalic; 
 	font-display: swap; 
-	src: url("./FONTS/Roboto-BlackItalic.woff2") format("woff2"); 
-	font-weight: 900;
+	src: url("./FONTS/Roboto-BoldItalic.woff2") format("woff2"); 
+	font-weight: 700;
 	font-style: italic;
 }
 
@@ -23,18 +23,26 @@
 }
 
 @font-face {
-	font-family: Roboto-BoldItalic; 
-	font-display: swap; 
-	src: url("./FONTS/Roboto-BoldItalic.woff2") format("woff2"); 
-	font-weight: 700;
-	font-style: italic;
-}
-
-@font-face {
 	font-family: Roboto-Italic; 
 	font-display: swap; 
 	src: url("./FONTS/Roboto-Italic.woff2") format("woff2"); 
 	font-weight: 400;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: Roboto-Medium; 
+	font-display: swap; 
+	src: url("./FONTS/Roboto-Medium.woff2") format("woff2"); 
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: Roboto-BlackItalic; 
+	font-display: swap; 
+	src: url("./FONTS/Roboto-BlackItalic.woff2") format("woff2"); 
+	font-weight: 900;
 	font-style: italic;
 }
 
@@ -47,27 +55,19 @@
 }
 
 @font-face {
-	font-family: Roboto-Light; 
-	font-display: swap; 
-	src: url("./FONTS/Roboto-Light.woff2") format("woff2"); 
-	font-weight: 300;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: Roboto-Medium; 
-	font-display: swap; 
-	src: url("./FONTS/Roboto-Medium.woff2") format("woff2"); 
-	font-weight: 500;
-	font-style: normal;
-}
-
-@font-face {
 	font-family: Roboto-MediumItalic; 
 	font-display: swap; 
 	src: url("./FONTS/Roboto-MediumItalic.woff2") format("woff2"); 
 	font-weight: 500;
 	font-style: italic;
+}
+
+@font-face {
+	font-family: Roboto-Light; 
+	font-display: swap; 
+	src: url("./FONTS/Roboto-Light.woff2") format("woff2"); 
+	font-weight: 300;
+	font-style: normal;
 }
 
 @font-face {
@@ -79,18 +79,18 @@
 }
 
 @font-face {
-	font-family: Roboto-ThinItalic; 
-	font-display: swap; 
-	src: url("./FONTS/Roboto-ThinItalic.woff2") format("woff2"); 
-	font-weight: 100;
-	font-style: italic;
-}
-
-@font-face {
 	font-family: Roboto-Thin; 
 	font-display: swap; 
 	src: url("./FONTS/Roboto-Thin.woff2") format("woff2"); 
 	font-weight: 100;
 	font-style: normal;
+}
+
+@font-face {
+	font-family: Roboto-ThinItalic; 
+	font-display: swap; 
+	src: url("./FONTS/Roboto-ThinItalic.woff2") format("woff2"); 
+	font-weight: 100;
+	font-style: italic;
 }
 

@@ -82,6 +82,7 @@ const paths = {
         src: {
             dest: `${srcPath}/STYLE/FONTS_SRC/`,
             woff2:`${srcPath}/STYLE/FONTS/`,
+            src:`${srcPath}/STYLE/FONTS/*.woff2`,
             ttf: `${srcPath}/STYLE/FONTS_SRC/*.ttf`,
             otf: `${srcPath}/STYLE/FONTS_SRC/*.otf`
         },
@@ -386,6 +387,12 @@ const font_face = async () => {
             }}
         }
     })
+
+
+    return gulp.src(paths.fonts.src.src)
+        .pipe(handleError('FONT_copy'))
+        .pipe(size())
+        .pipe(gulp.dest(paths.fonts.dest))
 }
 
 
@@ -419,8 +426,8 @@ const transpile_task = gulp.parallel(HTMLFunc, ScriptFunc, StyleFunc);
 
 
 
-const development = gulp.series(mode, clean_task, static_task, media_task, transpile_task, server_task);
-const build = gulp.series(mode, clean_task, static_task, media_task, transpile_task);
+const development = gulp.series(mode, clean_task, static_task, font_task, media_task, transpile_task, server_task);
+const build = gulp.series(mode, clean_task, static_task, font_task, media_task, transpile_task);
 
 gulp.task('clean', deleteFunc);
 gulp.task('media', media_task);
