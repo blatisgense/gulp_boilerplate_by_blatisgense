@@ -80,11 +80,10 @@ const paths = {
     },
     fonts: {
         src: {
-            dest: `${srcPath}/STYLE/FONTS_SRC/`,
-            woff2:`${srcPath}/STYLE/FONTS/`,
+            dest: `${srcPath}/STYLE/FONTS/`,
             src:`${srcPath}/STYLE/FONTS/*.woff2`,
-            ttf: `${srcPath}/STYLE/FONTS_SRC/*.ttf`,
-            otf: `${srcPath}/STYLE/FONTS_SRC/*.otf`
+            ttf: `${srcPath}/STYLE/FONTS/*.ttf`,
+            otf: `${srcPath}/STYLE/FONTS/*.otf`
         },
         dest: `${buildPath}/STYLE/FONTS/`
     },
@@ -248,22 +247,28 @@ const font_ttf = () => {
             .pipe(size())
             .pipe(gulp.dest(paths.fonts.src.dest))
     )};
-
 const font_woff2 = () => {
     return (gulp.src(paths.fonts.src.ttf))
         .pipe(handleError('TTF_TO_WOFF2'))
         .pipe(ttf2woff2())
         .pipe(size())
-        .pipe(gulp.dest(paths.fonts.src.woff2))
+        .pipe(gulp.dest(paths.fonts.src.dest))
 }
-
-
 const font_face = async () => {
     const fonts_sass = `${paths.styles.font}fonts.scss`;
-    fs.readdir(paths.fonts.src.woff2, (err, fonts) => {
+    fs.readdir(paths.fonts.src.dest, (err, fonts) => {
+        console.log(fonts);
         if (fonts) {
+            let arr = [];
             fs.writeFile(fonts_sass, '', error_log);
-            fonts.forEach((file) => {
+            fonts.forEach((file => {
+                if (file.split('.')[1] === 'woff2'){
+                    arr.push(file);
+                }
+            }));
+
+            arr.forEach((file => {
+                console.log(file)
                 const font_library = {
                     thin: {
                         weight: 100,
@@ -377,8 +382,9 @@ const font_face = async () => {
                 const fontStyle = font_library[font_data].style;
 
                 fs.appendFile(fonts_sass,
-                    `@font-face {\n\tfont-family: ${fontName}; \n\tfont-display: swap; \n\tsrc: url("./FONTS/${fontName}.woff2") format("woff2"); \n\tfont-weight: ${fontWeight};\n\tfont-style: ${fontStyle};\n}\n\n`, error_log);
-            });
+                    `@font-face {\n\tfont-family: ${fontName}; \n\tfont-display: swap; \n\tsrc: url("./FONTS/${fontName}.woff2") format("woff2"); \n\tfont-weight: ${fontWeight};\n\tfont-style: ${fontStyle};\n}\n\n`, error_log
+                );
+            }))
             function error_log(err) {
                 if (err) {
                     console.log(`Error in write file: ${fonts_sass}`, err);
@@ -437,6 +443,3 @@ gulp.task('dev', development);
 gulp.task('build', build);
 gulp.task('ftp', ftp);
 gulp.task('font', font_task);
-
-
-export {paths};
