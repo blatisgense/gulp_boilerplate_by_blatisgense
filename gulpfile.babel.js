@@ -22,12 +22,12 @@ import groupCssMediaQueries from 'gulp-group-css-media-queries';
 import fs from 'fs';
 import ttf2woff2 from 'gulp-ttf2woff2';
 import fonter from './node_modules/gulp-fonter-2/dist/index.js' //self-made fix, that asshole create index.d.ts empty...
-
 import webpack from 'webpack-stream';
 import { webpackConfig } from './webpack.config.js';
+import gulp_img_transform_to_picture from 'gulp_img_transform_to_picture'; // My own plugin. https://www.npmjs.com/package/gulp_img_transform_to_picture
 
-//test
-// import webpHtml from 'gulp-webp-html-nosvg'; // write plugin for yourself
+
+
 
 
 
@@ -222,7 +222,10 @@ const HTMLFunc = () => {
             prefix: '@@',
             /**basepath: '@file'**/
         }))
-        // .pipe(webpHtml())
+        .pipe(gulp_img_transform_to_picture({
+            avif: true,
+            webp: true
+        }))
         .pipe(htmlmin({
             useShortDoctype: true,
             sortClassName: true,

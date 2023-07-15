@@ -1,4 +1,4 @@
-import a from './import.js'
+import a from "./import.js"
 
 console.log(a);
 
@@ -7,7 +7,7 @@ console.log(await i);
 
 async function ff(){
     setTimeout(()=>{
-        return 12;
+                 return 12;
     }, 10000)
 }
 

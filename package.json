@@ -1,6 +1,6 @@
 {
   "name": "gulp_by_blatisgense",
-  "version": "2.1.0",
+  "version": "2.2.1",
   "description": "",
   "main": "gulpfile.babel.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blatisgense/Gulp_bundle_blatisgense"
+    "url": "https://github.com/blatisgense/Gulp_bundle_blatisgense"
   },
   "keywords": [
     "gulp",
@@ -41,6 +41,7 @@
     "gulp-autoprefixer": "^8.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-file-include": "^2.3.0",
+    "gulp-fonter-2": "^0.3.0",
     "gulp-group-css-media-queries": "^1.2.2",
     "gulp-htmlmin": "^5.0.1",
     "gulp-if": "^3.0.0",
@@ -55,7 +56,6 @@
     "gulp-ttf2woff": "^1.1.1",
     "gulp-ttf2woff2": "^4.0.1",
     "gulp-watch": "^5.0.1",
-    "gulp-webp-html-nosvg": "^1.0.1",
     "gulp-zip": "^5.1.0",
     "plugin-error": "^2.0.0",
     "prettier": "2.8.8",
@@ -63,7 +63,7 @@
     "vinyl-ftp": "^0.6.1",
     "webpack": "^5.65.0",
     "webpack-stream": "^7.0.0",
-    "gulp-fonter-2": "^0.3.0"
+    "gulp_img_transform_to_picture": "^1.6.0"
   },
   "dependencies": {
   },
