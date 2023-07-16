@@ -282,6 +282,23 @@ const font_face = async () => {
                         style: "italic",
                     },
 
+                    hairline: {
+                        weight: 100,
+                        style: "normal",
+                    },
+                    hairlineitalic: {
+                        weight: 100,
+                        style: "italic",
+                    },
+
+                    ultralight: {
+                        weight: 200,
+                        style: "normal",
+                    },
+                    ultralightitalic: {
+                        weight: 200,
+                        style: "italic",
+                    },
 
                     extralight: {
                         weight: 200,
@@ -308,6 +325,15 @@ const font_face = async () => {
                         style: "normal",
                     },
                     regularitalic: {
+                        weight: 400,
+                        style: "italic",
+                    },
+
+                    normal: {
+                        weight: 400,
+                        style: "normal",
+                    },
+                    normalitalic: {
                         weight: 400,
                         style: "italic",
                     },
@@ -339,6 +365,15 @@ const font_face = async () => {
                     },
 
 
+                    demibold: {
+                        weight: 600,
+                        style: "normal",
+                    },
+                    demibolditalic: {
+                        weight: 600,
+                        style: "italic",
+                    },
+
                     bold: {
                         weight: 700,
                         style: "normal",
@@ -358,13 +393,22 @@ const font_face = async () => {
                         style: "italic",
                     },
 
-
-                    heavy: {
+                    ultrabold: {
                         weight: 800,
                         style: "normal",
                     },
-                    heavyitalic: {
+                    ultrabolditalic: {
                         weight: 800,
+                        style: "italic",
+                    },
+
+
+                    heavy: {
+                        weight: 900,
+                        style: "normal",
+                    },
+                    heavyitalic: {
+                        weight: 900,
                         style: "italic",
                     },
 
@@ -375,6 +419,24 @@ const font_face = async () => {
                     },
                     blackitalic: {
                         weight: 900,
+                        style: "italic",
+                    },
+
+                    extrablack: {
+                        weight: 950,
+                        style: "normal",
+                    },
+                    extrablackitalic: {
+                        weight: 950,
+                        style: "italic",
+                    },
+
+                    ultrablack: {
+                        weight: 950,
+                        style: "normal",
+                    },
+                    ultrablackitalic: {
+                        weight: 950,
                         style: "italic",
                     }
                 }; //config for fonts
