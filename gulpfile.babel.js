@@ -440,14 +440,14 @@ const font_face = async () => {
                         style: "italic",
                     }
                 }; //config for fonts
-
-                const fontName = file.split('.')[0];
-                const font_data = fontName.split('-')[1].toLowerCase();
+                    //font data
+                const font = file.split('.')[0];
+                const font_name = font.split('-')[0];
+                const font_data = font.split('-')[1].toLowerCase();
                 const fontWeight = font_library[font_data].weight;
                 const fontStyle = font_library[font_data].style;
-
                 fs.appendFile(fonts_sass,
-                    `@font-face {\n\tfont-family: ${fontName}; \n\tfont-display: swap; \n\tsrc: url("./FONTS/${fontName}.woff2") format("woff2"); \n\tfont-weight: ${fontWeight};\n\tfont-style: ${fontStyle};\n}\n\n`, error_log
+                    `@font-face {\n\tfont-family: ${font_name}; \n\tfont-display: swap; \n\tsrc: url("./FONTS/${font}.woff2") format("woff2"); \n\tfont-weight: ${fontWeight};\n\tfont-style: ${fontStyle};\n}\n\n`, error_log
                 );
             }))
             function error_log(err) {
