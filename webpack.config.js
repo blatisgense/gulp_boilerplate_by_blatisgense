@@ -13,7 +13,6 @@ export const webpackConfig = (isMode) => {
   return {
     entry: { app: `${paths.src}/JS/app.js`},
 
-
     mode: isMode ? 'development' : 'production',
 
     output: {

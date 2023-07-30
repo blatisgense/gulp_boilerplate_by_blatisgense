@@ -73,8 +73,10 @@ const paths = {
     },
     media: {
         src: {
-            jpg: [`${srcPath}/MEDIA/**/*.jpg`, `${srcPath}/IMAGES/**/*.jpeg`],
+            jpg: [`${srcPath}/MEDIA/**/*.jpg`, `${srcPath}/MEDIA/**/*.jpeg`],
             png: `${srcPath}/MEDIA/**/*.png`,
+            src:[`${srcPath}/MEDIA/**/*.avif`, `${srcPath}/MEDIA/**/*.webp`],
+            dest: `${srcPath}/MEDIA/`
         },
         dest: `${buildPath}/MEDIA/`,
     },
@@ -127,7 +129,7 @@ const serverFunc = () => {
             port: 8080,
         },
     });
-}
+};
 const createSvgSprite = () => {
     return gulp.src(paths.svg.src)
         .pipe(handleError('SVG'))
@@ -189,8 +191,7 @@ const jpgFunc = () => {
                 { format: "avif"},
             ]
         }))
-        .pipe(size())
-        .pipe(gulp.dest(paths.media.dest))
+        .pipe(gulp.dest(paths.media.src.dest))
         .pipe(browserSync.stream());
 }
 const pngFunc = () => {
@@ -201,15 +202,21 @@ const pngFunc = () => {
                 { format: "webp", quality: 75},
             ]
         }))
+        .pipe(gulp.dest(paths.media.src.dest))
+        .pipe(browserSync.stream());
+}
+
+const media_copy = () => {
+    return gulp.src(paths.media.src.src)
+        .pipe(handleError('MEDIA_copy'))
         .pipe(size())
         .pipe(gulp.dest(paths.media.dest))
-        .pipe(browserSync.stream());
 }
 const mode = async () => {
     if (isDev){
-        console.log(`mode is dev`)
+        console.log(`[GULP] mode is dev\n`)
     } else {
-        console.log(`mode is build`)
+        console.log(`[GULP] mode is build\n`)
     }
 }
 const HTMLFunc = () => {
@@ -224,7 +231,8 @@ const HTMLFunc = () => {
         }))
         .pipe(gulp_img_transform_to_picture({
             avif: true,
-            webp: true
+            webp: true,
+            logger_extended: true
         }))
         .pipe(htmlmin({
             useShortDoctype: true,
@@ -260,7 +268,6 @@ const font_woff2 = () => {
 const font_face = async () => {
     const fonts_sass = `${paths.styles.font}fonts.scss`;
     fs.readdir(paths.fonts.src.dest, (err, fonts) => {
-        console.log(fonts);
         if (fonts) {
             let arr = [];
             fs.writeFile(fonts_sass, '', error_log);
@@ -269,9 +276,7 @@ const font_face = async () => {
                     arr.push(file);
                 }
             }));
-
             arr.forEach((file => {
-                console.log(file)
                 const font_library = {
                     thin: {
                         weight: 100,
@@ -440,25 +445,26 @@ const font_face = async () => {
                         style: "italic",
                     }
                 }; //config for fonts
-                    //font data
                 const font = file.split('.')[0];
                 const font_name = font.split('-')[0];
+                console.log(`[GULP] ${file} added to fonts.scss\n`)
                 const font_data = font.split('-')[1].toLowerCase();
-                const fontWeight = font_library[font_data].weight;
-                const fontStyle = font_library[font_data].style;
-                fs.appendFile(fonts_sass,
-                    `@font-face {\n\tfont-family: ${font_name}; \n\tfont-display: swap; \n\tsrc: url("./FONTS/${font}.woff2") format("woff2"); \n\tfont-weight: ${fontWeight};\n\tfont-style: ${fontStyle};\n}\n\n`, error_log
-                );
+                let fontWeight;
+                let fontStyle;
+                if (font_library[font_data]){
+                    fontWeight = font_library[font_data].weight;
+                    fontStyle = font_library[font_data].style;
+                    fs.appendFile(fonts_sass,
+                        `@font-face {\n\tfont-family: ${font_name}; \n\tfont-display: swap; \n\tsrc: url("./FONTS/${font}.woff2") format("woff2"); \n\tfont-weight: ${fontWeight};\n\tfont-style: ${fontStyle};\n}\n\n`, error_log
+                    );
+                }
             }))
             function error_log(err) {
                 if (err) {
                     console.log(`Error in write file: ${fonts_sass}`, err);
-            } else {
-                console.log(`Font successfully added to file ${fonts_sass}`);
             }}
         }
     })
-
 
     return gulp.src(paths.fonts.src.src)
         .pipe(handleError('FONT_copy'))
@@ -488,7 +494,7 @@ const watchFunc = () => {
 //==============
 // TASKS
 //==============
-const media_task = gulp.parallel(jpgFunc, pngFunc, createSvgSprite);
+const media_task = gulp.series(jpgFunc, pngFunc, media_copy, createSvgSprite);
 const font_task = gulp.series(font_ttf, font_woff2, font_face);
 const server_task = gulp.parallel(serverFunc, watchFunc);
 const clean_task = deleteFunc;

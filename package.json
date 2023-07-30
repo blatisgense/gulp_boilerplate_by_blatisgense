@@ -1,6 +1,6 @@
 {
   "name": "gulp_by_blatisgense",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "description": "",
   "main": "gulpfile.babel.js",
   "scripts": {
@@ -38,7 +38,7 @@
     "del": "^6.1.1",
     "fs": "^0.0.1-security",
     "gulp": "^4.0.2",
-    "gulp_img_transform_to_picture": "^1.8.0",
+    "gulp_img_transform_to_picture": "^2.2.1",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-file-include": "^2.3.0",
