@@ -2,6 +2,7 @@
 /.idea/
 /_build/
 /q/
+/_src/STYLE/FONTS/**/*.woff2
 /later/
 /package-lock.json
 /test/

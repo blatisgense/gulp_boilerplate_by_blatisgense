@@ -476,8 +476,6 @@ const font_face = async () => {
 
 
 
-
-
 const watchFunc = () => {
     gulp.watch(paths.scripts.src, ScriptFunc);
     gulp.watch(paths.styles.src, StyleFunc);
@@ -503,13 +501,15 @@ const transpile_task = gulp.parallel(HTMLFunc, ScriptFunc, StyleFunc);
 
 
 
-const development = gulp.series(mode, clean_task, static_task, font_task, media_task, transpile_task, server_task);
+const developmentM = gulp.series(mode, clean_task, static_task, font_task, media_task, transpile_task, server_task);
+const development = gulp.series(mode, clean_task, static_task, font_task, media_copy, transpile_task, server_task);
 const build = gulp.series(mode, clean_task, static_task, font_task, media_task, transpile_task);
 
 gulp.task('clean', deleteFunc);
 gulp.task('media', media_task);
 gulp.task('static', static_task);
 gulp.task('default', development);
+gulp.task('devMedia', developmentM);
 gulp.task('dev', development);
 gulp.task('build', build);
 gulp.task('ftp', ftp);

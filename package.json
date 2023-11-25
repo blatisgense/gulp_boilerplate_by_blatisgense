@@ -1,10 +1,11 @@
 {
   "name": "gulp_by_blatisgense",
-  "version": "2.5.0",
-  "description": "",
+  "version": "2.5.1",
+  "description": "My dev. Gulp bundle.",
   "main": "gulpfile.babel.js",
   "scripts": {
-    "dev": "gulp dev",
+    "dev": "gulp devMedia",
+    "dev --no-media": "gulp dev",
     "build": "gulp build --build",
     "deployFTP": "gulp ftp --build",
     "svgSprive": "gulp media",
