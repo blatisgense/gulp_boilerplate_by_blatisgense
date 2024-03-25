@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    @@include('./HTML_parts/head.html', {
-    "title": "test"} )
-</head>
+@@include('./components/head.html', {
+    "title": "test"
+} )
 <body>
 <div class="page">
     <header class="header">
-        @@include('./HTML_parts/nav.html')
+        @@include('./components/nav.html')
     </header>
     <main class="main">
+        <img src="assets/images/cat.jpg" alt="img">
+        <p>Test layout</p>
     </main>
 </div>
-@@include('./HTML_parts/footer.html')
-<script type="module" src="JS/app.js"></script>
+@@include('./components/footer.html')
+<script type="module" src="assets/javascript/app.js"></script>
 </body>
 </html>

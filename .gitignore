@@ -1,8 +1,4 @@
-/node_modules/
-/.idea/
-/_build/
-/q/
-/_src/STYLE/FONTS/**/*.woff2
-/later/
-/package-lock.json
-/test/
+.idea/
+_build/
+gulp/node_modules/
+gulp/package-lock.json
