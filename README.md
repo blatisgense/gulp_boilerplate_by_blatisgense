@@ -8,11 +8,11 @@ _Plugins_:
 <br>
 Importing components: `gulp-file-include`.
 <br>
-Replace \<img> with \<picture>:
+Replace `<img>` with `<picture>`:
 [gulp_img_transform_to_picture](https://www.npmjs.com/package/gulp_img_transform_to_picture) (plugin by myself).
 <br>
 Compression: `gulp-htmlmin`.
-- **Javascript**: Fully processed by WebPack and its plugins.
+- **Javascript**: Fully processed by `WebPack` + `Babel` and its plugins.
 - **Styles**:
 Support old browsers: `gulp-autoprefixer`.
 <br>
